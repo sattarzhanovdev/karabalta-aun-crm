@@ -5,7 +5,7 @@ import { API } from '../../api';
 import { Components } from '..';
 import Barcode from 'react-barcode';
 
-const STOCK_API = 'https://aunbelovodskiy.pythonanywhere.com';
+const STOCK_API = 'https://aunkarabalta.pythonanywhere.com';
 
 const StockTable = () => {
   const [month, setMonth] = React.useState('');
