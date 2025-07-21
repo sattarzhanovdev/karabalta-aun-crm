@@ -19,7 +19,7 @@ const AddStock = ({ setActive, selectedBranch }) => {
 
   const branchAPI = selectedBranch === 'sokuluk'
     ? 'https://auncrm.pythonanywhere.com'
-    : 'https://aunbelovodskiy.pythonanywhere.com'
+    : 'https://aunkarabalta.pythonanywhere.com'
 
   const handleChange = (index, field, value) => {
     setRows(prev =>

@@ -144,8 +144,8 @@ const StockTable = () => {
         </table>
       </div>
 
-      {editActive && <Components.EditStock setActive={setEditActive} selectedBranch="belovodskiy" />}
-      {active && <Components.AddStock setActive={setActive} selectedBranch="belovodskiy" />}
+      {editActive && <Components.EditStock setActive={setEditActive} selectedBranch="karabalta" />}
+      {active && <Components.AddStock setActive={setActive} selectedBranch="karabalta" />}
     </div>
   );
 };
