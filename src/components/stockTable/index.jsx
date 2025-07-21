@@ -57,6 +57,8 @@ const StockTable = () => {
     return filtered;
   };
 
+  const filteredItems = filterGoods() || [];
+
   return (
     <div className={c.workers}>
       <div className={c.table}>
@@ -67,7 +69,7 @@ const StockTable = () => {
         >
           <option value="">‒ Все категории ‒</option>
           {categories && categories.map(item => (
-            <option key={item.id} value={item.name}>{item.name}</option>
+            <option key={item.id} value={item.name || `cat-${item.id}`}>{item.name}</option>
           ))}
         </select>
 
@@ -75,12 +77,12 @@ const StockTable = () => {
           <thead>
             <tr>
               <th>_</th>
-              <th>{filterGoods()?.length || 0} позиций</th>
+              <th>{filteredItems.length} позиций</th>
               <th></th>
-              <th>{filterGoods()?.reduce((a, b) => Number(a) + Number(b.fixed_quantity), 0)}</th>
-              <th>{filterGoods()?.reduce((a, b) => Number(a) + Number(b.quantity), 0)}</th>
-              <th>{filterGoods()?.reduce((a, b) => Number(a) + Number(b.price_seller * b.fixed_quantity), 0)} сом</th>
-              <th>{filterGoods()?.reduce((a, b) => Number(a) + Number(b.price * b.fixed_quantity), 0)} сом</th>
+              <th>{filteredItems.reduce((a, b) => a + Number(b.fixed_quantity), 0)}</th>
+              <th>{filteredItems.reduce((a, b) => a + Number(b.quantity), 0)}</th>
+              <th>{filteredItems.reduce((a, b) => a + Number(b.price_seller * b.fixed_quantity), 0)} сом</th>
+              <th>{filteredItems.reduce((a, b) => a + Number(b.price * b.fixed_quantity), 0)} сом</th>
               <th></th>
               <th></th>
             </tr>
@@ -99,8 +101,8 @@ const StockTable = () => {
             </tr>
           </thead>
           <tbody>
-            {filterGoods()?.length > 0 ? (
-              filterGoods().map((item, i) => (
+            {filteredItems.length > 0 ? (
+              filteredItems.map((item, i) => (
                 <tr key={item.id}
                     style={
                       Number(item.quantity) <= 30
@@ -126,12 +128,16 @@ const StockTable = () => {
                   <td>{item.price_seller}</td>
                   <td>{item.price}</td>
                   <td>
-                    <Barcode
-                      value={item.code.split(',')[0]}
-                      width={0.6}
-                      height={20}
-                      fontSize={12}
-                    />
+                    {item.code && item.code.split(',')[0] ? (
+                      <Barcode
+                        value={item.code.split(',')[0].trim()}
+                        width={0.6}
+                        height={20}
+                        fontSize={12}
+                      />
+                    ) : (
+                      <span>Нет кода</span>
+                    )}
                   </td>
                 </tr>
               ))
