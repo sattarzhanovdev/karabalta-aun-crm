@@ -35,6 +35,14 @@ const Kassa = () => {
       .catch(e => console.error('Ошибка загрузки товаров', e))
 
     API.getSales().then(r => setSales(r.data))
+
+    // При монтировании проверяем черновик
+    const draft = localStorage.getItem('kassa-draft')
+    if (draft) {
+      const parsed = JSON.parse(draft)
+      if (parsed.cart) setCart(parsed.cart)
+      if (parsed.payment) setPay(parsed.payment)
+    }
   }, [])
 
   const handleScan = e => {
@@ -171,6 +179,19 @@ const Kassa = () => {
     })
   }
 
+  const saveDraft = () => {
+    localStorage.setItem('kassa-draft', JSON.stringify({ cart, payment }))
+    setCart([]) // очистить корзину после сохранения
+    alert('Касса отложена и очищена')
+  }
+
+  const restoreDraft = () => {
+    const draft = JSON.parse(localStorage.getItem('kassa-draft') || '{}')
+    if (draft.cart) setCart(draft.cart)
+    if (draft.payment) setPay(draft.payment)
+    alert('Касса восстановлена')
+  }
+
   return (
     <div style={{ padding: 24, maxWidth: 900, margin: '0 auto', fontFamily: 'sans-serif' }}>
       <h2>🧾 Касса</h2>
@@ -268,6 +289,11 @@ const Kassa = () => {
         {localStorage.getItem('kassa-id')
           ? <button onClick={closeKassa} style={sellBtn}>Закрыть кассу</button>
           : <button onClick={openKassa} style={sellBtn}>Открыть кассу</button>}
+      </div>
+
+      <div style={{ textAlign: 'right', marginTop: 10 }}>
+        <button onClick={saveDraft} style={{ ...sellBtn, background: '#2980b9' }}>💾 Отложить кассу</button>
+        <button onClick={restoreDraft} style={{ ...sellBtn, background: '#8e44ad', marginLeft: 10 }}>♻️ Восстановить</button>
       </div>
 
       {multipleMatches && (

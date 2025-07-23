@@ -60,11 +60,11 @@ const MainReport = () => {
       <div className={c.card}>
         <div className={c.up}>
           <img src={Icons.date} alt="date" />
-          <h3>Оборота за месяц/Прибыль</h3>
+          <h3>Оборот за месяц / Прибыль</h3>
         </div>
         <div className={c.down}>
           <h1>{benefit} / {benefit-data.monthly_expense}</h1>
-          <button>Посмотреть</button>
+          {/* <button>Посмот  реть</button> */}
         </div>
       </div>
       <div className={c.card}>
@@ -74,7 +74,7 @@ const MainReport = () => {
         </div>
         <div className={c.down}>
           <h1>{data.monthly_expense}</h1>
-          <button>Посмотреть</button>
+          {/* <button>Посмотреть</button> */}
         </div>
       </div>
       {/* <div className={c.card}>
