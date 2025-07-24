@@ -52,7 +52,11 @@ const StockTable = () => {
       );
     }
     if (selectedCategory) {
-      filtered = filtered?.filter(item => item.category === selectedCategory);
+      console.log(selectedCategory);
+      console.log(filtered);
+      
+      
+      filtered = filtered?.filter(item => item.category.name === selectedCategory);
     }
     return filtered;
   };
