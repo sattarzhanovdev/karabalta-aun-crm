@@ -18,6 +18,7 @@ const Kassa = () => {
   const [highlight, setHighlight] = useState(-1)
   const [multipleMatches, setMultipleMatches] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [isNameFocused, setIsNameFocused] = useState(false)
 
   const scanRef = useRef()
   const nameRef = useRef()
@@ -37,16 +38,23 @@ const Kassa = () => {
 
     API.getSales().then(r => setSales(r.data))
 
-    // При монтировании проверяем черновик
-    const draft = localStorage.getItem('kassa-draft')
-    if (draft) {
-      const parsed = JSON.parse(draft)
-      if (parsed.cart) setCart(parsed.cart)
-      if (parsed.payment) setPay(parsed.payment)
-    }
   }, [])
 
-    
+  useEffect(() => {
+    const focusScanner = () => {
+      if (!isNameFocused) scanRef.current?.focus()
+    }
+
+    focusScanner()
+
+    document.addEventListener('click', focusScanner)
+    window.addEventListener('focus', focusScanner)
+
+    return () => {
+      document.removeEventListener('click', focusScanner)
+      window.removeEventListener('focus', focusScanner)
+    }
+  }, [isNameFocused])
 
   const handleScan = e => {
     if (e.key !== 'Enter') return
@@ -54,7 +62,6 @@ const Kassa = () => {
     if (!code) return
 
     const matches = goods.filter(g => g.code_array.includes(code))
-
     if (matches.length === 0) {
       alert('Товар не найден')
     } else if (matches.length === 1) {
@@ -90,18 +97,18 @@ const Kassa = () => {
     } else if (e.key === 'Enter') {
       e.preventDefault()
       const item = suggest[highlight >= 0 ? highlight : 0]
-      if (item) { addToCart(item); clearSuggest() }
+      if (item) {
+        addToCart(item)
+        clearSuggest()
+        scanRef.current?.focus()
+      }
     }
   }
 
   const chooseSuggest = i => {
     addToCart(suggest[i])
     clearSuggest()
-    nameRef.current.focus()
-    clearSuggest()
-    setTimeout(() => {
-      scanRef.current?.focus()
-    }, 0)
+    scanRef.current?.focus()
   }
 
   const clearSuggest = () => {
@@ -120,16 +127,13 @@ const Kassa = () => {
   }
 
   const changeQty = (i, d) =>
-    setCart(p => p.map((r, idx) =>
-      idx === i ? { ...r, qty: Math.max(1, r.qty + d) } : r))
+    setCart(p => p.map((r, idx) => idx === i ? { ...r, qty: Math.max(1, r.qty + d) } : r))
 
   const setQtyManual = (i, v) =>
-    setCart(p => p.map((r, idx) =>
-      idx === i ? { ...r, qty: Math.max(1, parseInt(v) || 1) } : r))
+    setCart(p => p.map((r, idx) => idx === i ? { ...r, qty: Math.max(1, parseInt(v) || 1) } : r))
 
   const updatePrice = (i, value) =>
-    setCart(p => p.map((r, idx) =>
-      idx === i ? { ...r, price: parseFloat(value) || 0 } : r))
+    setCart(p => p.map((r, idx) => idx === i ? { ...r, price: parseFloat(value) || 0 } : r))
 
   const removeRow = idx => setCart(p => p.filter((_, i) => i !== idx))
 
@@ -140,7 +144,7 @@ const Kassa = () => {
         alert('Сначала откройте кассу')
         return
       }
-      setLoading(true) // включаем загрузку
+      setLoading(true)
       const payload = {
         total: total.toFixed(2),
         payment_type: payment,
@@ -160,7 +164,7 @@ const Kassa = () => {
       console.error(e)
       alert('Ошибка при продаже')
     } finally {
-      setLoading(false) // выключаем загрузку
+      setLoading(false)
     }
   }
 
@@ -191,8 +195,9 @@ const Kassa = () => {
 
   const saveDraft = () => {
     localStorage.setItem('kassa-draft', JSON.stringify({ cart, payment }))
-    setCart([]) // очистить корзину после сохранения
+    setCart([])
     alert('Касса отложена и очищена')
+    window.location.reload()
   }
 
   const restoreDraft = () => {
@@ -201,6 +206,7 @@ const Kassa = () => {
     if (draft.payment) setPay(draft.payment)
     alert('Касса восстановлена')
   }
+
 
   return (
     <div style={{ padding: 24, maxWidth: 900, margin: '0 auto', fontFamily: 'sans-serif' }}>
