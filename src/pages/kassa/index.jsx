@@ -72,7 +72,7 @@ const Kassa = () => {
     }
 
     const re = new RegExp(val, 'i')
-    setSuggest(goods.filter(g => re.test(g.name)).slice(0, 8))
+    setSuggest(goods.filter(g => re.test(g.name)))
     setHighlight(-1)
   }
 
