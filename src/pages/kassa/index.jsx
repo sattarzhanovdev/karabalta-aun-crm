@@ -17,6 +17,7 @@ const Kassa = () => {
   const [suggest, setSuggest] = useState([])
   const [highlight, setHighlight] = useState(-1)
   const [multipleMatches, setMultipleMatches] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const scanRef = useRef()
   const nameRef = useRef()
@@ -44,6 +45,8 @@ const Kassa = () => {
       if (parsed.payment) setPay(parsed.payment)
     }
   }, [])
+
+    
 
   const handleScan = e => {
     if (e.key !== 'Enter') return
@@ -95,6 +98,10 @@ const Kassa = () => {
     addToCart(suggest[i])
     clearSuggest()
     nameRef.current.focus()
+    clearSuggest()
+    setTimeout(() => {
+      scanRef.current?.focus()
+    }, 0)
   }
 
   const clearSuggest = () => {
@@ -133,6 +140,7 @@ const Kassa = () => {
         alert('Сначала откройте кассу')
         return
       }
+      setLoading(true) // включаем загрузку
       const payload = {
         total: total.toFixed(2),
         payment_type: payment,
@@ -151,6 +159,8 @@ const Kassa = () => {
     } catch (e) {
       console.error(e)
       alert('Ошибка при продаже')
+    } finally {
+      setLoading(false) // выключаем загрузку
     }
   }
 
@@ -335,6 +345,20 @@ const Kassa = () => {
                 Отмена
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {loading && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.6)', display: 'flex',
+          justifyContent: 'center', alignItems: 'center', zIndex: 10000
+        }}>
+          <div style={{
+            background: '#fff', padding: 30, borderRadius: 10,
+            fontSize: 18, fontWeight: 'bold'
+          }}>
+            ⏳ Подождите, идет обработка продажи…
           </div>
         </div>
       )}
