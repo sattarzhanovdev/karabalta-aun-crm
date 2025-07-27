@@ -212,12 +212,12 @@ const Kassa = () => {
     <div style={{ padding: 24, maxWidth: 900, margin: '0 auto', fontFamily: 'sans-serif' }}>
       <h2>🧾 Касса</h2>
 
-      <input ref={scanRef} onKeyDown={handleScan}
+      <input  onKeyDown={handleScan}
         placeholder="Сканируйте штрих-код…"
         style={{ width: '100%', padding: 12, fontSize: 16, marginBottom: 20 }} />
 
       <div style={{ position: 'relative' }}>
-        <input ref={nameRef}
+        <input 
           value={query}
           onChange={handleNameChange}
           onKeyDown={keyNav}
