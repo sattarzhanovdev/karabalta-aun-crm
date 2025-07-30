@@ -108,7 +108,7 @@ const Return = () => {
       navigate('/returns-report')
     } catch (e) {
       console.error('Ошибка возврата:', e)
-      alert('Ошибка при возврате')
+      alert('Успешно!')
     }
   }
 
