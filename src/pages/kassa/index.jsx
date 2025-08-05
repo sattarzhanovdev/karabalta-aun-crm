@@ -263,7 +263,7 @@ const Kassa = () => {
           </tr>
         </thead>
         <tbody>
-          {cart.map((it, idx) => (
+          {cart.reverse().map((it, idx) => (
             <tr key={idx}>
               <td style={td}>{it.name}</td>
               <td style={td}>
