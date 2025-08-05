@@ -126,16 +126,17 @@ const Kassa = () => {
     })
   }
 
-  const changeQty = (i, d) =>
-    setCart(p => p.map((r, idx) => idx === i ? { ...r, qty: Math.max(1, r.qty + d) } : r))
+  const changeQty = (id, d) =>
+    setCart(p => p.map(r => r.id === id ? { ...r, qty: Math.max(1, r.qty + d) } : r))
 
-  const setQtyManual = (i, v) =>
-    setCart(p => p.map((r, idx) => idx === i ? { ...r, qty: Math.max(1, parseInt(v) || 1) } : r))
+  const setQtyManual = (id, v) =>
+    setCart(p => p.map(r => r.id === id ? { ...r, qty: Math.max(1, parseInt(v) || 1) } : r))
 
-  const updatePrice = (i, value) =>
-    setCart(p => p.map((r, idx) => idx === i ? { ...r, price: parseFloat(value) || 0 } : r))
+  const updatePrice = (id, value) =>
+    setCart(p => p.map(r => r.id === id ? { ...r, price: parseFloat(value) || 0 } : r))
 
-  const removeRow = idx => setCart(p => p.filter((_, i) => i !== idx))
+  const removeRow = id =>
+    setCart(p => p.filter(r => r.id !== id))
 
   const handleSell = async () => {
     if (!cart.length) return alert('Корзина пуста')
@@ -263,36 +264,40 @@ const Kassa = () => {
           </tr>
         </thead>
         <tbody>
-          {cart.reverse().map((it, idx) => (
-            <tr key={idx}>
-              <td style={td}>{it.name}</td>
-              <td style={td}>
-                <input
-                  type="number"
-                  min={0}
-                  step={0.01}
-                  value={it.price}
-                  onChange={e => updatePrice(idx, e.target.value)}
-                  style={{ width: 70, textAlign: 'center' }}
-                />
-              </td>
-              <td style={td}>
-                <button onClick={() => changeQty(idx, -1)} style={btn}>−</button>
-                <input type="number" min={1} value={it.qty}
-                  onChange={e => setQtyManual(idx, e.target.value)}
-                  style={{ width: 50, textAlign: 'center' }} />
-                <button onClick={() => changeQty(idx, 1)} style={btn}>+</button>
-                <div style={{ fontSize: 11, color: '#888' }}>
-                  Остаток: {it.quantity - it.qty}
-                </div>
-              </td>
-              <td style={td}>{(it.qty * +it.price).toFixed(2)} сом</td>
-              <td style={td}>
-                <button onClick={() => removeRow(idx)} style={delBtn}>×</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+  {cart.slice().reverse().map(it => (
+    <tr key={it.id}>
+      <td style={td}>{it.name}</td>
+      <td style={td}>
+        <input
+          type="number"
+          min={0}
+          step={0.01}
+          value={it.price}
+          onChange={e => updatePrice(it.id, e.target.value)}
+          style={{ width: 70, textAlign: 'center' }}
+        />
+      </td>
+      <td style={td}>
+        <button onClick={() => changeQty(it.id, -1)} style={btn}>−</button>
+        <input
+          type="number"
+          min={1}
+          value={it.qty}
+          onChange={e => setQtyManual(it.id, e.target.value)}
+          style={{ width: 50, textAlign: 'center' }}
+        />
+        <button onClick={() => changeQty(it.id, 1)} style={btn}>+</button>
+        <div style={{ fontSize: 11, color: '#888' }}>
+          Остаток: {it.quantity - it.qty}
+        </div>
+      </td>
+      <td style={td}>{(it.qty * +it.price).toFixed(2)} сом</td>
+      <td style={td}>
+        <button onClick={() => removeRow(it.id)} style={delBtn}>×</button>
+      </td>
+    </tr>
+  ))}
+</tbody>
       </table>
 
       <h3 style={{ textAlign: 'right' }}>Итого: {total.toFixed(2)} сом</h3>
